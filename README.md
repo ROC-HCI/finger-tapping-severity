@@ -13,5 +13,5 @@
 
 **Code**:
 
-feature_extraction.py is used for extracting features given a filename and specified hand (left or right)
-model_training.py is used to train the severity assessment model, after the features are extracted and correlated features are removed.
+1. feature_extraction.py is used for extracting features given a filename and specified hand (left or right)
+2. model_training.py is used to train the severity assessment model, after the features are extracted and correlated features are removed.
