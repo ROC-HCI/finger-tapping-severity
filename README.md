@@ -13,5 +13,7 @@
 
 **Code**:
 
-1. feature_extraction.py is used for extracting features given a filename and specified hand (left or right)
-2. model_training.py is used to train the severity assessment model, after the features are extracted and correlated features are removed.
+1. **feature_extraction.py** is used for extracting features given a filename and specified hand (left or right)
+2. **model_training** is used to train the severity assessment model, after the features are extracted and correlated features are removed.
+3. model_training_with_neural_network.py was used to report performance of neural network models. 
+The setup is exactly the same as the previous one. However this uses standard Pytorch libraries and may require installations of more packages.
