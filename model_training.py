@@ -24,6 +24,11 @@ from imblearn.over_sampling import SMOTE
 RATING_FILE = "./severity_dataset_dropped_correlated_columns.csv"
 
 def load():
+    '''
+    Return three arrays: features, labels, patient_ids (features[i], labels[i], and patient_ids[i] should correspond to the same data point)
+    This paper uses leave-one-patient-out cross validation, which requires grouping data based on patient IDs.
+    If your dataset does not have associated patient IDs, you will need to re-implement the evaluation method, as leave-one-patient-out may not be applicable.
+    '''
     df = pd.read_csv(RATING_FILE)
     features = df.loc[:, 'wrist_mvmnt_x_median':'acceleration_min_trimmed']
     labels = df["Rating"]
@@ -38,6 +43,10 @@ def load():
     return features, labels, df["id"]
 
 def select(features:DataFrame, labels, **cfg):
+    '''
+    Rank the features based on a "base model", 
+    return top-n features where n is a hyper-parameter
+    '''
     methods = { "BoostRFE":BoostRFE, "BoostRFA":BoostRFA, "BoostBoruta":BoostBoruta }
 
     SELECTOR = methods[cfg["selector"]]
@@ -143,6 +152,10 @@ def model(**cfg):
 @click.option("--scaling_method",default='StandardScaler',help="Options: StandardScaler, MinMaxScaler")
 @click.option("--minority_oversample",default='no',help="Options: yes, no")
 def main(**cfg):
+    '''
+    If you do not want wandb setup, comment all the lines starting with "wandb."
+    If using wandb, create a project and use the appropriate project name.
+    '''
     wandb.init(project="npj-severity-paper", config=cfg)
     features, labels, ids = load()
 
@@ -176,8 +189,14 @@ def main(**cfg):
             X_test = scaler.transform(X_test)
 
         if cfg['minority_oversample']=='yes':
-            y_train[y_train==4] = 3
-            y_test[y_test==4] = 3
+            '''
+            One major issue is the dataset does not have many samples with a severity score 4. 
+            So, in many cases, the training set may contain only 1 or 2 samples with severity 4, and SMOTE fails.
+            That's why we merged severity 3 and 4 when testing the model performance with "SMOTE" setting.
+            The main performance metric(s) reported in the paper are without using SMOTE. 
+            '''
+            #y_train[y_train==4] = 3
+            #y_test[y_test==4] = 3
             (X_train, y_train) = oversample.fit_resample(X_train, y_train)
 
         regressor.fit(X_train, y_train)
@@ -189,6 +208,9 @@ def main(**cfg):
 
     results = metrics(all_preds, all_labels)
     wandb.log(results)
+    '''
+    Uncomment this to save model predictions, useful for error analysis.
+    '''
     #wandb.log({"predictions":wandb.Table(dataframe=save_preds)})
 
 if __name__ == "__main__":
