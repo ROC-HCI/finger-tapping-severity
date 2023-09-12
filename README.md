@@ -18,9 +18,8 @@
 3. model_training_with_neural_network.py was used to report performance of neural network models. 
 The setup is exactly the same as the previous one. However this uses standard Pytorch libraries and may require installations of more packages.
 
+**Cite our paper:**
 
-**Cite our paper:
-**
 Islam, M.S., Rahman, W., Abdelkader, A. et al. 
 Using AI to measure Parkinson’s disease severity at home. 
 npj Digit. Med. 6, 156 (2023). 
